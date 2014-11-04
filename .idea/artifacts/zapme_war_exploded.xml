@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="zapme:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/zapme_war_exploded.war</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="zapme/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="zapme" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="file-copy" path="$USER_HOME$/Downloads/google-gson-2.2.4/gson-2.2.4.jar" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

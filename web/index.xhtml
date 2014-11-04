@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <h:outputScript name="jsf.js" library="javax.faces" target="head"/>
+    <title>Rest In Zappos</title>
+    <style type="text/css">
+        .resultsTable tr:nth-child(even) {
+            background-color: white;;
+        }
+
+        .resultsTable tbody {
+            background-color: #ddd;
+            height: 500px;
+            overflow: auto;
+        }
+
+        .resultsTable td {
+            padding: 3px 10px;
+        }
+
+        .resultsTable thead > tr, tbody {
+            display: block;
+        }
+
+        .errorMsg {
+            color: red;
+        }
+
+        body {
+            background: ghostwhite;
+        }
+    </style>
+</h:head>
+<h:body>
+    <h3>The art of giving (gifts :))</h3>
+    <h:form prependId="false">
+
+        <table>
+            <tr><h:messages errorClass="errorMsg" globalOnly="true"/></tr>
+            <tr>
+                <td><h:outputText value="How many gifts are you buying?"/></td>
+                <td>
+                    <h:inputText id="itemQuantity" value="#{restInZappos.itemQuantity}"
+                                 requiredMessage="Please enter the number of items.">
+                        <f:validateDoubleRange minimum="1" maximum="100"/>
+                        <f:convertNumber integerOnly="true"/>
+                        <f:ajax event="blur" render="itemQuantityError"/>
+                    </h:inputText>
+
+                </td>
+                <td><h:message id="itemQuantityError" for="itemQuantity" errorClass="errorMsg" showSummary="false"
+                               showDetail="true"/></td>
+            </tr>
+
+            <tr>
+                <td>Show us the Moolah:</td>
+                <td><h:inputText id="totalMoney" value="#{restInZappos.itemTotal}"
+                                 requiredMessage="Please enter the number of items.">
+                    <f:validateDoubleRange minimum="1"/>
+                    <f:convertNumber integerOnly="true"/>
+                    <f:ajax event="blur" render="totalMoneyError"/>
+                </h:inputText>
+
+                </td>
+                <td><h:message id="totalMoneyError" for="totalMoney" errorClass="errorMsg" showSummary="true"
+                               showDetail="false"/></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h:commandButton value="Let's Roll" action="#{restInZappos.playSlots}">
+                        <f:ajax execute="@form" render="@form"/>
+                    </h:commandButton>
+                </td>
+                <td>
+                    <div id="ajaxloader" style="display: none;"><h:outputText value="Loading..."/></div>
+                </td>
+            </tr>
+        </table>
+
+
+        <table>
+            <tr>
+                <ui:repeat value="#{restInZappos.catalogs}" var="catalog" varStatus="varStatus">
+                    <td>
+                        <h:commandButton value="Catalog #{varStatus.index + 1}"
+                                         action="#{restInZappos.updateCatalog(varStatus.index)}">
+                            <f:ajax execute="@form" render="@form"/>
+                        </h:commandButton>
+                    </td>
+                </ui:repeat></tr>
+
+
+            <h:panelGroup id="catalog" rendered="#{restInZappos.catalogPresent}">
+                <table border="2px solid;" class="resultsTable">
+                    <tr>
+                        <td>Sr. No.</td>
+                        <td><h:outputText value="We took this picture :)"/></td>
+                        <td><h:outputText value="Brand"/></td>
+                        <td><h:outputText value="This will cost ya!"/></td>
+                        <td><h:outputText value="Product Link"/></td>
+                        <td><h:outputText value="You are saving!"/></td>
+                    </tr>
+
+
+                    <ui:repeat value="#{restInZappos.currentCatalog}" var="product" varStatus="productVar">
+                        <tr>
+                            <td>#{productVar.index + 1}</td>
+                            <td><h:graphicImage url="#{product.thumbnailImageUrl}"/></td>
+                            <td><h:outputText value="#{product.brandName}" escape="false"
+                                              style="font-weight: bold; padding-bottom: 5px;"/>
+                                <br/>
+                                <h:outputText value="#{product.productName}" escape="false"/></td>
+                            <td><h:outputText value="#{product.price}"/></td>
+                            <td><h:outputLink value="#{product.productUrl}" target="_blank"> Click here.</h:outputLink>
+                            </td>
+                            <td><h:outputText
+                                    value="#{product.percentOff eq'0%' ? 'Not on Sale' : 'product.percentOff'}"/></td>
+                        </tr>
+
+                    </ui:repeat>
+                </table>
+
+
+            </h:panelGroup>
+
+
+        </table>
+
+
+    </h:form>
+
+
+    <script type="application/javascript">
+        jsf.ajax.addOnEvent(function (data) {
+            var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
+            var ajaxloader = document.getElementById("ajaxloader");
+            console.log(ajaxloader);
+            switch (ajaxstatus) {
+                case "begin": // This is called right before ajax request is been sent.
+                    ajaxloader.style.display = 'block';
+                    break;
+
+                case "complete": // This is called right after ajax response is received.
+                    ajaxloader.style.display = 'none';
+                    break;
+
+                case "success": // This is called when ajax response is successfully processed.
+                    // NOOP.
+                    break;
+            }
+        });
+    </script>
+</h:body>
+</html>

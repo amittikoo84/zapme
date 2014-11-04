@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eclipse-userlibraries>
+  <library name="Mojarra-2.2.1">
+    <archive path="/Users/amittikoo84/zapme/lib/jstl-1.1.0.jar" />
+    <archive path="/Users/amittikoo84/zapme/lib/javax.faces-2.2.1.jar" />
+  </library>
+  <library name="Jersey-2.2">
+    <archive path="/Users/amittikoo84/zapme/lib/jersey-container-servlet.jar" />
+    <archive path="/Users/amittikoo84/zapme/lib/jersey-container-servlet-core.jar" />
+    <archive path="/Users/amittikoo84/zapme/lib/javax.ws.rs-api-2.0.jar" />
+    <archive path="/Users/amittikoo84/zapme/lib/jersey-client.jar" />
+    <archive path="/Users/amittikoo84/zapme/lib/jersey-common.jar" />
+    <archive path="/Users/amittikoo84/zapme/lib/jersey-server.jar" />
+  </library>
+</eclipse-userlibraries>
+
