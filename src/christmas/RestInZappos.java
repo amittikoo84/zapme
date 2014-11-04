@@ -66,7 +66,7 @@ public class RestInZappos implements ZapConstants {
     /**
      * Call the REST API
      *
-     * @param urlStr: The URL string put togethere for REST call.
+     * @param urlStr: The URL string put together for REST call.
      * @return Response.
      * @throws IOException
      */
@@ -260,5 +260,9 @@ public class RestInZappos implements ZapConstants {
 
     public void setCatalogs(List<ZapposItem[]> catalogs) {
         this.catalogs = catalogs;
+    }
+
+    public void setItems(ZapposItem[] items) {
+        this.items = items;
     }
 }

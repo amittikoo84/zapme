@@ -38,6 +38,15 @@
     <orderEntry type="library" name="Mojarra-2.2.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="JBoss 8.1.0.Final" level="application_server_libraries" />
     <orderEntry type="library" name="Jersey-2.2" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/junit-4.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 
