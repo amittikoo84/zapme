@@ -33,103 +33,120 @@
         }
 
         body {
-            background: ghostwhite;
+            background: url('http://hdwallpapersfactory.com/wallpaper/christmas_bauble_desktop_1920x1200_hd-wallpaper-846604.jpg');
         }
+
     </style>
 </h:head>
 <h:body>
-    <h3>The art of giving (gifts :))</h3>
     <h:form prependId="false">
-
-        <table>
-            <tr><h:messages errorClass="errorMsg" globalOnly="true"/></tr>
-            <tr>
-                <td><h:outputText value="How many gifts are you buying?"/></td>
-                <td>
-                    <h:inputText id="itemQuantity" value="#{restInZappos.itemQuantity}"
-                                 requiredMessage="Please enter the number of items.">
-                        <f:validateDoubleRange minimum="1" maximum="100"/>
-                        <f:convertNumber integerOnly="true"/>
-                        <f:ajax event="blur" render="itemQuantityError"/>
-                    </h:inputText>
-
-                </td>
-                <td><h:message id="itemQuantityError" for="itemQuantity" errorClass="errorMsg" showSummary="false"
-                               showDetail="true"/></td>
-            </tr>
-
-            <tr>
-                <td>Show us the Moolah:</td>
-                <td><h:inputText id="totalMoney" value="#{restInZappos.itemTotal}"
-                                 requiredMessage="Please enter the number of items.">
-                    <f:validateDoubleRange minimum="1"/>
-                    <f:convertNumber integerOnly="true"/>
-                    <f:ajax event="blur" render="totalMoneyError"/>
-                </h:inputText>
-
-                </td>
-                <td><h:message id="totalMoneyError" for="totalMoney" errorClass="errorMsg" showSummary="true"
-                               showDetail="false"/></td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h:commandButton value="Let's Roll" action="#{restInZappos.startAwesomeness}">
-                        <f:ajax execute="@form" render="@form"/>
-                    </h:commandButton>
-                </td>
-                <td>
-                    <div id="ajaxloader" style="display: none;"><h:outputText value="Loading..."/></div>
-                </td>
-            </tr>
-        </table>
-
-
         <table>
             <tr>
-                <ui:repeat value="#{restInZappos.catalogs}" var="catalog" varStatus="varStatus">
-                    <td>
-                        <h:commandButton value="Catalog #{varStatus.index + 1}"
-                                         action="#{restInZappos.updateCatalog(varStatus.index)}">
-                            <f:ajax execute="@form" render="@form"/>
-                        </h:commandButton>
-                    </td>
-                </ui:repeat></tr>
-
-
-            <h:panelGroup id="catalog" rendered="#{restInZappos.catalogPresent}">
-                <table border="2px solid;" class="resultsTable">
-                    <tr>
-                        <td>Sr. No.</td>
-                        <td><h:outputText value="We took this picture :)"/></td>
-                        <td><h:outputText value="Brand"/></td>
-                        <td><h:outputText value="This will cost ya!"/></td>
-                        <td><h:outputText value="Product Link"/></td>
-                        <td><h:outputText value="You are saving!"/></td>
-                    </tr>
-
-
-                    <ui:repeat value="#{restInZappos.currentCatalog}" var="product" varStatus="productVar">
+                <td valign="top">
+                    <table width="100%" align="center">
                         <tr>
-                            <td>#{productVar.index + 1}</td>
-                            <td><h:graphicImage url="#{product.thumbnailImageUrl}"/></td>
-                            <td><h:outputText value="#{product.brandName}" escape="false"
-                                              style="font-weight: bold; padding-bottom: 5px;"/>
-                                <br/>
-                                <h:outputText value="#{product.productName}" escape="false"/></td>
-                            <td><h:outputText value="#{product.price}"/></td>
-                            <td><h:outputLink value="#{product.productUrl}" target="_blank"> Click here.</h:outputLink>
+                            <td>
+                                <h:graphicImage url="http://s27.postimg.org/aehiz7b2b/WWJG.gif"/>
                             </td>
-                            <td><h:outputText
-                                    value="#{product.percentOff eq'0%' ? 'Not on Sale' : 'product.percentOff'}"/></td>
+                            <td>
+                            </td>
+                        </tr>
+                        <tr><h:messages errorClass="errorMsg" globalOnly="true"/></tr>
+                        <tr>
+                            <td><h:outputText value="How many gifts are you buying?"/></td>
+                            <td>
+                                <h:inputText id="itemQuantity" value="#{restInZappos.itemQuantity}"
+                                             requiredMessage="Please enter the number of items.">
+                                    <f:validateDoubleRange minimum="1" maximum="100"/>
+                                    <f:convertNumber integerOnly="true"/>
+                                    <f:ajax event="blur" render="itemQuantityError"/>
+                                </h:inputText>
+
+                            </td>
+                            <td><h:message id="itemQuantityError" for="itemQuantity" errorClass="errorMsg"
+                                           showSummary="false"
+                                           showDetail="true"/></td>
                         </tr>
 
-                    </ui:repeat>
-                </table>
+                        <tr>
+                            <td>How much do you want to spend?</td>
+                            <td><h:inputText id="totalMoney" value="#{restInZappos.itemTotal}"
+                                             requiredMessage="Please enter the maximum you want to spend.">
+                                <f:validateDoubleRange minimum="1"/>
+                                <f:convertNumber integerOnly="true"/>
+                                <f:ajax event="blur" render="totalMoneyError"/>
+                            </h:inputText>
+
+                            </td>
+                            <td><h:message id="totalMoneyError" for="totalMoney" errorClass="errorMsg"
+                                           showSummary="true"
+                                           showDetail="false"/></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <h:commandButton value="Let's Roll" action="#{restInZappos.startAwesomeness}">
+                                    <f:ajax execute="@form" render="@form"/>
+                                </h:commandButton>
+                            </td>
+                            <td>
+                                <div id="ajaxloader" style="display: none;"><h:outputText value="Loading..."/></div>
+                            </td>
+                        </tr>
+
+                    </table>
+                </td>
+                <td align="center" valign="middle">
+                    <table>
+                        <tr>
+                            <ui:repeat value="#{restInZappos.catalogs}" var="catalog" varStatus="varStatus">
+                                <td>
+                                    <h:commandButton value="Catalog #{varStatus.index + 1}"
+                                                     action="#{restInZappos.updateCatalog(varStatus.index)}">
+                                        <f:ajax execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </td>
+                            </ui:repeat></tr>
 
 
-            </h:panelGroup>
+                        <h:panelGroup id="catalog" rendered="#{restInZappos.catalogPresent}">
+                            <table border="2px solid;" class="resultsTable">
+                                <tr>
+                                    <td>Sr. No.</td>
+                                    <td><h:outputText value="We took this picture :)"/></td>
+                                    <td><h:outputText value="Brand"/></td>
+                                    <td><h:outputText value="This will cost ya!"/></td>
+                                    <td><h:outputText value="Product Link"/></td>
+                                    <td><h:outputText value="You are saving!"/></td>
+                                </tr>
 
 
+                                <ui:repeat value="#{restInZappos.currentCatalog}" var="product" varStatus="productVar">
+                                    <tr>
+                                        <td>#{productVar.index + 1}</td>
+                                        <td><h:graphicImage url="#{product.thumbnailImageUrl}"/></td>
+                                        <td><h:outputText value="#{product.brandName}" escape="false"
+                                                          style="font-weight: bold; padding-bottom: 5px;"/>
+                                            <br/>
+                                            <h:outputText value="#{product.productName}" escape="false"/></td>
+                                        <td><h:outputText value="#{product.price}"/></td>
+                                        <td><h:outputLink value="#{product.productUrl}"
+                                                          target="_blank"> Click here.</h:outputLink>
+                                        </td>
+                                        <td><h:outputText
+                                                value="#{product.percentOff eq'0%' ? 'Not on Sale' : 'product.percentOff'}"/>
+                                        </td>
+                                    </tr>
+
+                                </ui:repeat>
+                            </table>
+
+
+                        </h:panelGroup>
+
+
+                    </table>
+                </td>
+            </tr>
         </table>
 
 

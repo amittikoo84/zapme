@@ -7,13 +7,17 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Amit Tikoo on 11/3/14.
@@ -40,13 +44,14 @@ import java.util.List;
  * 2. No. of gifts should not exceed 100.<br/>
  * 3. If enough results are not available, show message to user.<br/>
  *
+ * TODO: Add the maximum number of REST calls to be made to Zappos API.
  *
  */
 
 @ManagedBean
 @ViewScoped
 public class RestInZappos implements ZapConstants {
-
+    private final static Logger LOGGER = Logger.getLogger(RestInZappos.class.getName());
     private int itemQuantity;
     private int itemTotal;
     private int perItemEven;
@@ -57,23 +62,6 @@ public class RestInZappos implements ZapConstants {
     private String addToPrice = ".0";
     private int currentPage = 1;
     private String priceFilter;
-
-    public static void saveImage(String imageUrl, String destinationFile) throws IOException {
-        URL url = new URL(imageUrl);
-        destinationFile += "../resources/";
-        InputStream is = url.openStream();
-        OutputStream os = new FileOutputStream(destinationFile);
-
-        byte[] b = new byte[2048];
-        int length;
-
-        while ((length = is.read(b)) != -1) {
-            os.write(b, 0, length);
-        }
-
-        is.close();
-        os.close();
-    }
 
     /**
      * Call the REST API
@@ -88,7 +76,7 @@ public class RestInZappos implements ZapConstants {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         if (connection.getResponseCode() != 200) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("The was an error while trying to access the web service."));
+            LOGGER.log(Level.WARNING, "The was an error while trying to access the web service.");
         }
 
         // Buffer the result into a string
