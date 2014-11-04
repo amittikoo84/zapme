@@ -1,11 +1,12 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-ear" name="zapme:ear exploded">
+  <artifact type="exploded-ear" build-on-make="true" name="zapme:ear exploded">
     <output-path>$PROJECT_DIR$/out/artifacts/zapme_ear_exploded.ear</output-path>
     <root id="root">
       <element id="javaee-facet-resources" facet="zapme/javaeeApplication/javaEEApplication" />
       <element id="directory" name="web.war">
         <element id="artifact" artifact-name="zapme:war exploded" />
       </element>
+      <element id="directory" name="lib" />
     </root>
   </artifact>
 </component>

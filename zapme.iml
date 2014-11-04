@@ -47,6 +47,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="javax.faces-2.2.1" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
 

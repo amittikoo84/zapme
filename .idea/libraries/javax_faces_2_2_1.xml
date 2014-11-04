@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="javax.faces-2.2.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/javax.faces-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gson-2.2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/junit-4.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
