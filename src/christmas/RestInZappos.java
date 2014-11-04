@@ -17,6 +17,30 @@ import java.util.List;
 
 /**
  * Created by Amit Tikoo on 11/3/14.
+ *
+ * This is a managed bean, (View Scoped) that contains Actions and modal items for our application.<br/>
+ *
+ * When a user clicks starts the action we call the Zappos search API.<br/>
+ *
+ * <b><u>Steps:</u></b><br/>
+ *
+ * 1. Divide the amount user wants to spend by the item quantity which gives us the approx. amount (rounded to bottom) <br/>
+ *    the user wants to spend on each gift.<br/>
+ * 2. Search the items on zappos with the amount from Step 1.<br/>
+ * 3. If enough items are found (3 times the amount requested by user - since we are showing the user 3 catalogs)<br/>
+ *     i. Dividve the List into 3 sublists and display as a catalog that can be switched and viewed using AJAX.<br/>
+ * 4. If not enough items, first check if there are more pages (items) for the same price available and use them<br/>
+ * 5. If more pages are not available reduce the amount by one cent and retry search.<br/>
+ * 6. If enough items are still not available, reduce by $1 and retry.<br/>
+ * 7. The best fit will be shown first.<br/>
+ *
+ * <b><u>Assumptions, Error Conditions and Validations:</u></b><br/>
+ *
+ * 1. The input should be numbers. Non-negative and greater than 0.<br/>
+ * 2. No. of gifts should not exceed 100.<br/>
+ * 3. If enough results are not available, show message to user.<br/>
+ *
+ *
  */
 
 @ManagedBean
@@ -27,7 +51,6 @@ public class RestInZappos implements ZapConstants {
     private int itemTotal;
     private int perItemEven;
     private int catalogIndex;
-    //Declare as list and reverse in the end in order to put the best match first.
     private List<ZapposItem[]> catalogs = new LinkedList<ZapposItem[]>();
     private ZapposItem[] items;
     private ZapposItem[] currentCatalog;
@@ -35,21 +58,71 @@ public class RestInZappos implements ZapConstants {
     private int currentPage = 1;
     private String priceFilter;
 
+    public static void saveImage(String imageUrl, String destinationFile) throws IOException {
+        URL url = new URL(imageUrl);
+        destinationFile += "../resources/";
+        InputStream is = url.openStream();
+        OutputStream os = new FileOutputStream(destinationFile);
+
+        byte[] b = new byte[2048];
+        int length;
+
+        while ((length = is.read(b)) != -1) {
+            os.write(b, 0, length);
+        }
+
+        is.close();
+        os.close();
+    }
+
+    /**
+     * Call the REST API
+     *
+     * @param urlStr: The URL string put togethere for REST call.
+     * @return Response.
+     * @throws IOException
+     */
+    private static String httpGet(String urlStr) throws IOException {
+
+        URL url = new URL(urlStr);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        if (connection.getResponseCode() != 200) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("The was an error while trying to access the web service."));
+        }
+
+        // Buffer the result into a string
+        BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder responseString = new StringBuilder();
+
+        String line;
+        while ((line = rd.readLine()) != null)
+            responseString.append(line);
+        rd.close();
+
+        connection.disconnect();
+        return responseString.toString();
+    }
+
+    /**
+     * Initialize data.
+     */
+    private void init() {
+        addToPrice = ".0";
+        currentPage = 1;
+        catalogs = new ArrayList<ZapposItem[]>();
+        catalogIndex = 0;
+    }
 
     /**
      * This Action Listener is called when the user initially enter information and clicks submit button.
      */
 
-    public void playSlots() throws IOException {
-        addToPrice = ".0";
-        currentPage = 1;
-        catalogs = new ArrayList<ZapposItem[]>();
+    public void startAwesomeness() {
+        init();
         perItemEven = itemTotal / itemQuantity;
         createCatalog();
         updateCatalog(0);
-        catalogIndex = 0;
-
-        //saveImage(getCatalogs().get(0)[0].getThumbnailImageUrl(), getCatalogs().get(0)[0].getProductName());
     }
 
     /**
@@ -65,7 +138,6 @@ public class RestInZappos implements ZapConstants {
                 swapAddToPrice();
                 currentPage = 1;
             }
-
         } else {
             tryAnotherPrice();
             swapAddToPrice();
@@ -92,7 +164,7 @@ public class RestInZappos implements ZapConstants {
      * Call Zappos REST API and enter the required params.
      * The response is parsed using GSON into a List of objects.
      */
-    public void tryAnotherPrice() {
+    private void tryAnotherPrice() {
         priceFilter = String.format(FILTER, String.valueOf(perItemEven) + addToPrice);
         perItemEven--;
         System.out.println("Try another Price: " + priceFilter);
@@ -103,16 +175,15 @@ public class RestInZappos implements ZapConstants {
     /**
      * Try another page, since the REST API only responds with one page at a time.
      *
-     * @return
      */
-    private boolean tryNextPage() {
+    private void tryNextPage() {
         String pageFilter = String.format(PAGE, currentPage);
         priceFilter = String.format(FILTER, String.valueOf(perItemEven) + addToPrice);
         String URLRequest = SEARCH + LIMIT + FACET_FILTER + priceFilter + pageFilter + SORT_DESC + API_KEY;
-        return retrieveAndParseResponse(URLRequest);
+        retrieveAndParseResponse(URLRequest);
     }
 
-    private boolean retrieveAndParseResponse(String URLRequest) {
+    private void retrieveAndParseResponse(String URLRequest) {
         Gson gson = new Gson();
         try {
             String response = httpGet(URLRequest);
@@ -121,7 +192,6 @@ public class RestInZappos implements ZapConstants {
         } catch (IOException ex) {
             System.out.println(ex.toString());
         }
-        return items.length != 0;
     }
 
     /**
@@ -139,7 +209,7 @@ public class RestInZappos implements ZapConstants {
             } else {
                 choice = Arrays.copyOfRange(items, startAt, endAt);
                 catalogIndex++;
-                if(choice[0] != null ) {
+                if (choice[0] != null) {
                     catalogs.add(choice);
                 }
             }
@@ -151,12 +221,12 @@ public class RestInZappos implements ZapConstants {
     /**
      * The Catalog list is paginated. This function implements pagination
      *
-     * @param index
-     * @return
+     * @param index: the index of the catalog to show.
+     * @return null: Placeholder.
      */
     public String updateCatalog(int index) {
         if (catalogs.size() == 0) {
-            //Not enough items
+            //Not enough items, put message in Faces Context to be shown tot he user.
             notEnoughItems();
         } else {
             currentCatalog = catalogs.get(index);
@@ -172,67 +242,20 @@ public class RestInZappos implements ZapConstants {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Not enough products. Please tweak your choices."));
     }
 
-    public static void saveImage(String imageUrl, String destinationFile) throws IOException {
-        URL url = new URL(imageUrl);
-        destinationFile += "../resources/";
-        InputStream is = url.openStream();
-        OutputStream os = new FileOutputStream(destinationFile);
-
-        byte[] b = new byte[2048];
-        int length;
-
-        while ((length = is.read(b)) != -1) {
-            os.write(b, 0, length);
-        }
-
-        is.close();
-        os.close();
+    public int getItemQuantity() {
+        return itemQuantity;
     }
-
-    /**
-     * Call the REST API
-     *
-     * @param urlStr
-     * @return
-     * @throws IOException
-     */
-    private static String httpGet(String urlStr) throws IOException {
-
-        URL url = new URL(urlStr);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        if (connection.getResponseCode() != 200) {
-            throw new IOException(connection.getResponseMessage());
-        }
-
-        // Buffer the result into a string
-        BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder responseString = new StringBuilder();
-
-        String line;
-        while ((line = rd.readLine()) != null)
-            responseString.append(line);
-        rd.close();
-
-        connection.disconnect();
-        return responseString.toString();
-    }
-
 
     public void setItemQuantity(int itemQuantity) {
         this.itemQuantity = itemQuantity;
     }
 
-    public int getItemQuantity() {
-        return itemQuantity;
+    public int getItemTotal() {
+        return itemTotal;
     }
 
     public void setItemTotal(int itemTotal) {
         this.itemTotal = itemTotal;
-    }
-
-    public int getItemTotal() {
-        return itemTotal;
     }
 
     public ZapposItem[] getCurrentCatalog() {
